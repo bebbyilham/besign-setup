@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,9 +15,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Homepage
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('admin-dashboard');
 });
+
+// Dashboard
+Route::prefix('dashboard')
+    ->middleware(['auth:sanctum', 'admin'])
+    ->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('admin-dashboard');
+        // Route::resource('food', FoodController::class);
+        Route::resource('users', UserController::class);
+
+        // Route::get('transactions/{id}/status/{status}', [TransactionController::class, 'changeStatus'])->name('transactions.changeStatus');
+        // Route::resource('transactions', TransactionController::class);
+    });
 
 Route::middleware([
     'auth:sanctum',
