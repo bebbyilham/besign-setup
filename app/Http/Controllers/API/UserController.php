@@ -111,20 +111,28 @@ class UserController extends Controller
         return ResponseFormatter::success($token, 'Token Revoked');
     }
 
-    public function updateProfile(Request $request)
+    public function updateProfile(Request $request, User $user)
     {
         $data = $request->all();
-
+        if ($request->file('picturePath')) {
+            $data['picturePath'] = $request->file('picturePath')->store('assets/user', 'public');
+        }
+        // $data['password'] = Hash::make($request->password);
+        $data['current_team_id'] = 1;
         $user = Auth::user();
         $user->update($data);
 
-        return ResponseFormatter::success($user, 'Profile Updated');
+
+
+        // return redirect()->route('users.index'); 
+
+        return ResponseFormatter::success($user, 'Profile Updated!');
     }
 
     public function updatePhoto(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'file' => 'required|image|max:2048',
+            'file' => 'required|image|max:20048',
         ]);
 
         if ($validator->fails()) {
